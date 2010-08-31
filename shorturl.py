@@ -13,6 +13,7 @@ SHORTREGEX = r'''(?s)id="txtfld".*?value\s*=\s*"(.*?)"'''
 COUNTERREGEX = r'''(?s)id="txtfld3".*?value\s*=\s*"(.*?)"'''
 LOGFILE = os.path.expanduser('''~/.shorturl''')
 
+
 def shrink(longurl, log=True):
     queryurl = URLSERVICE % urllib.quote(longurl)
     html = "\n".join(urllib2.urlopen(queryurl).readlines())
@@ -20,7 +21,7 @@ def shrink(longurl, log=True):
 
     if log:
         counterurl = re.search(COUNTERREGEX, html).group(1)
-        file = open(LOGFILE, "w")
+        file = open(LOGFILE, "a")
         file.write("%s %s\n" % (longurl, counterurl))
         file.close()
 
