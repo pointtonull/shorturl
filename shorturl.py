@@ -22,7 +22,10 @@ def shrink(longurl, log=True):
 
     if log:
         counterurl = re.search(COUNTERREGEX, html).group(1)
-        file = open(LOGFILE, "a")
+        try:
+            file = open(LOGFILE, "a")
+        except:
+            file = open(LOGFILE, "w")
         file.write("%s %s\n" % (longurl, counterurl))
         file.close()
 
