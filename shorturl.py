@@ -6,6 +6,7 @@ import urllib2
 import re
 import os
 import fileinput
+from decoradores import Retry
 
 URLREGEX = r'''(?i)(?:http|ftp)s?://[]:/?#@!$&'()*+,;=A-z\d\-._~%[]*'''
 URLSERVICE = '''http://shorturl.com/make_shorturl.php'''
@@ -14,11 +15,15 @@ COUNTERREGEX = r'''(?s)id="txtfld3".*?value\s*=\s*"(.*?)"'''
 LOGFILE = os.path.expanduser('''~/.shorturl''')
 
 
+@Retry(10)
 def shrink(longurl, log=True):
     longurl = urllib.quote_plus(longurl)
     data = urllib.urlencode({"longurl": longurl, "x": "30", "y": "7"})
     html = "\n".join(urllib2.urlopen(URLSERVICE, data).readlines())
-    shorturl = re.search(SHORTREGEX, html).group(1)
+    try:
+        shorturl = re.search(SHORTREGEX, html).group(1)
+    except:
+        return None
 
     if log:
         counterurl = re.search(COUNTERREGEX, html).group(1)
