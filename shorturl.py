@@ -17,25 +17,27 @@ LOGFILE = os.path.expanduser('''~/.shorturl''')
 
 @Retry(10)
 def shrink(longurl, log=True):
-    longurl = urllib.quote_plus(longurl)
-    data = urllib.urlencode({"longurl": longurl, "x": "30", "y": "7"})
-    html = "\n".join(urllib2.urlopen(URLSERVICE, data).readlines())
-    try:
-        shorturl = re.search(SHORTREGEX, html).group(1)
-    except:
-        return None
-
-    if log:
-        counterurl = re.search(COUNTERREGEX, html).group(1)
+    if len(longurl) < 24:
+        return longurl
+    else:
+        longurl = urllib.quote_plus(longurl)
+        data = urllib.urlencode({"longurl": longurl, "x": "30", "y": "7"})
+        html = "\n".join(urllib2.urlopen(URLSERVICE, data).readlines())
         try:
-            file = open(LOGFILE, "a")
+            shorturl = re.search(SHORTREGEX, html).group(1)
         except:
-            file = open(LOGFILE, "w")
-        file.write("%s %s\n" % (longurl, counterurl))
-        file.close()
+            return None
 
+        if log:
+            counterurl = re.search(COUNTERREGEX, html).group(1)
+            try:
+                file = open(LOGFILE, "a")
+            except:
+                file = open(LOGFILE, "w")
+            file.write("%s %s\n" % (longurl, counterurl))
+            file.close()
 
-    return shorturl
+        return shorturl
 
 
 def main():
