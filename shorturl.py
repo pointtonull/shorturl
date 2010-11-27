@@ -17,7 +17,7 @@ LOGFILE = os.path.expanduser('''~/.shorturl''')
 
 @Retry(10)
 def shrink(longurl, log=True):
-    if len(longurl) < 24:
+    if len(longurl) < 30:
         return longurl
     else:
         longurl = urllib.quote_plus(longurl)
