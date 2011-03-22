@@ -24,19 +24,19 @@ class Log(object):
 
     def append(self, longurl, shorturl):
         with open(self.logfile, "a") as file:
-            file.write(FIELDSEPARATOR.join((longurl, shorturl + "\n")))
-        self.entries[shorturl] = longurl
+            file.write(FIELDSEPARATOR.join((longurl, shorturl)) + "\n")
+        self.entries[longurl] = shorturl
         return True
 
 
 @Retry(10)
 def shrink(longurl, log=True):
+    longurl = urllib.quote_plus(longurl)
     if len(longurl) < 30:
         return longurl
     elif longurl in global_log.entries:
         return global_log.entries[longurl]
     else:
-        longurl = urllib.quote_plus(longurl)
         data = urllib.urlencode({"longurl": longurl, "x": "30", "y": "7"})
         html = "\n".join(urllib2.urlopen(URLSERVICE, data).readlines())
         try:
